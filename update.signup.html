@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Trash to Treasure</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+    <h1>Sign Up / Log In</h1>
+</header>
+
+<section class="form-section">
+    <form id="signupForm">
+        <label for="username">Name:</label>
+        <input type="text" id="username" required>
+
+        <label for="email">Email:</label>
+        <input type="email" id="email" required>
+
+        <button type="submit">Register</button>
+    </form>
+
+    <p id="message"></p>
+</section>
+
+<script>
+    document.getElementById("signupForm").addEventListener("submit", function(event) {
+        event.preventDefault();  // Prevent the form from reloading the page
+
+        // Get values from the form fields
+        const username = document.getElementById("username").value;
+        const email = document.getElementById("email").value;
+
+        // Store the user data in localStorage
+        localStorage.setItem("username", username);
+        localStorage.setItem("email", email);
+
+        // Show a success message
+        document.getElementById("message").innerText = "Account created successfully!";
+
+        // Redirect to the profile page (assuming you have one)
+        setTimeout(() => window.location.href = "profile.html", 2000); // Redirect after 2 seconds
+    });
+</script>
+
+<footer>
+    <p>&copy; 2025 Trash to Treasure</p>
+</footer>
+
+</body>
+</html>
