@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trash to Treasure</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <h1>Trash to Treasure</h1>
+        <nav>
+            <a href="index.html">Home</a>
+            <a href="cleanup.html">Log Cleanup</a>
+            <a href="collection.html">Collection Points</a>
+            <a href="events.html">Community Events</a>
+            <a href="rewards.html">Rewards</a>
+            <a href="signup.html">Profile</a>
+        </nav>
+    </header>
+    <section class="hero">
+        <h2>Turn Trash Into Treasure!</h2>
+        <p>Help clean up your community, earn rewards, and make a positive impact!</p>
+        <a href="signup.html" class="btn">Get Started</a>
+    </section>
+    <footer>
+        <p>&copy; 2025 Trash to Treasure</p>
+    </footer>
+</body>
+</html>
