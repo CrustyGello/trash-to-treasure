@@ -34,15 +34,20 @@
         const username = document.getElementById("username").value;
         const email = document.getElementById("email").value;
 
-        // Store the user data in localStorage
-        localStorage.setItem("username", username);
-        localStorage.setItem("email", email);
+        // Check if both fields are filled
+        if (username && email) {
+            // Store the user data in localStorage
+            localStorage.setItem("username", username);
+            localStorage.setItem("email", email);
 
-        // Show a success message
-        document.getElementById("message").innerText = "Account created successfully!";
+            // Show a success message
+            document.getElementById("message").innerText = "Account created successfully!";
 
-        // Redirect to the profile page (assuming you have one)
-        setTimeout(() => window.location.href = "profile.html", 2000); // Redirect after 2 seconds
+            // Redirect to the profile page (assuming you have one)
+            setTimeout(() => window.location.href = "profile.html", 2000); // Redirect after 2 seconds
+        } else {
+            document.getElementById("message").innerText = "Please fill out both fields.";
+        }
     });
 </script>
 
