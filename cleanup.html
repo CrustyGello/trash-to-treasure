@@ -14,8 +14,12 @@
 
 <section>
     <form id="cleanupForm">
+        <label for="location">Enter Cleanup Location:</label>
+        <input type="text" id="location" placeholder="City, Street, or Landmark" required>
+
         <label for="photo">Upload Cleanup Photo:</label>
         <input type="file" id="photo" accept="image/*" required>
+
         <button type="submit">Submit</button>
     </form>
 
@@ -26,12 +30,13 @@
     document.getElementById("cleanupForm").addEventListener("submit", function(event) {
         event.preventDefault();
 
-        // Get username and file
+        // Get user details
         const username = localStorage.getItem("username") || "Anonymous";
+        const location = document.getElementById("location").value.trim();
         const file = document.getElementById("photo").files[0];
 
-        if (!file) {
-            alert("Please upload a photo!");
+        if (!file || location === "") {
+            alert("Please enter a location and upload a photo!");
             return;
         }
 
@@ -40,11 +45,18 @@
         reader.onload = function() {
             const photoData = reader.result;
 
-            // Get existing submissions or create new array
+            // Get existing submissions or create a new array
             let submissions = JSON.parse(localStorage.getItem("submissions")) || [];
-            
-            // Save new submission
-            submissions.push({ username, photo: photoData });
+
+            // Add new cleanup entry with location and timestamp
+            submissions.push({
+                username,
+                location,
+                photo: photoData,
+                timestamp: new Date().toLocaleString()
+            });
+
+            // Save data
             localStorage.setItem("submissions", JSON.stringify(submissions));
 
             document.getElementById("logMessage").textContent = "Cleanup logged successfully!";
