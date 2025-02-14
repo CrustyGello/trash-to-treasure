@@ -46,6 +46,8 @@
     <p id="userEmailLabel">Email: <span id="userEmail"></span></p>
     <!-- Button to open language settings -->
     <button class="btn" onclick="openLanguageSettings()">Change Language</button>
+    <!-- Button to sign out -->
+    <button class="btn" onclick="signOut()">Sign Out</button>
 </section>
 
 <footer>
@@ -80,19 +82,22 @@
             "profileTitle": "Your Profile",
             "welcomeMessage": "Welcome, ",
             "userEmailLabel": "Email: ",
-            "changeLanguageBtn": "Change Language"
+            "changeLanguageBtn": "Change Language",
+            "signOutBtn": "Sign Out"
         },
         "af": {
             "profileTitle": "Jou Profiel",
             "welcomeMessage": "Welkom, ",
             "userEmailLabel": "E-pos: ",
-            "changeLanguageBtn": "Verander Taal"
+            "changeLanguageBtn": "Verander Taal",
+            "signOutBtn": "Teken Uitskakeling"
         },
         "zu": {
             "profileTitle": "Iphrofayela Yakho",
             "welcomeMessage": "Siyakwamukela, ",
             "userEmailLabel": "I-imeyili: ",
-            "changeLanguageBtn": "Shintsha Ulimi"
+            "changeLanguageBtn": "Shintsha Ulimi",
+            "signOutBtn": "Phuma"
         }
     };
 
@@ -115,6 +120,7 @@
         document.getElementById("welcomeMessage").innerText = languageStrings[language]["welcomeMessage"];
         document.getElementById("userEmailLabel").innerText = languageStrings[language]["userEmailLabel"];
         document.querySelector(".btn").innerText = languageStrings[language]["changeLanguageBtn"];
+        document.querySelectorAll('.btn')[1].innerText = languageStrings[language]["signOutBtn"];
         closeModal('languagePromptModal'); // Close the language selection modal
     }
 
@@ -143,6 +149,14 @@
         document.getElementById("userEmail").innerText = email;
     } else {
         window.location.href = "signup.html";
+    }
+
+    // Sign out function: Clears localStorage and redirects to sign-up page
+    function signOut() {
+        localStorage.removeItem("username");
+        localStorage.removeItem("email");
+        localStorage.removeItem("language"); // Clear language preference too
+        window.location.href = "signup.html"; // Redirect to sign-up page
     }
 
     // Run the language check function
