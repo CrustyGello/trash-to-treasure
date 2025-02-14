@@ -28,6 +28,44 @@
     <div id="submissionsContainer"></div>
 </section>
 
+    <script>
+    function loadSubmissions() {
+        const submissionsContainer = document.getElementById("submissionsContainer");
+        submissionsContainer.innerHTML = "";
+
+        const submissions = JSON.parse(localStorage.getItem("submissions")) || [];
+
+        if (submissions.length === 0) {
+            submissionsContainer.innerHTML = "<p>No submissions yet.</p>";
+            return;
+        }
+
+        submissions.forEach((submission, index) => {
+            const submissionDiv = document.createElement("div");
+            submissionDiv.classList.add("submission");
+
+            submissionDiv.innerHTML = `
+                <p><strong>User:</strong> ${submission.username}</p>
+                <p><strong>Location:</strong> ${submission.location}</p>
+                <p><strong>Timestamp:</strong> ${submission.timestamp}</p>
+                <img src="${submission.photo}" alt="Cleanup Photo" style="max-width: 100%; height: auto;">
+                <button onclick="deleteSubmission(${index})">Delete</button>
+                <hr>
+            `;
+            submissionsContainer.appendChild(submissionDiv);
+        });
+    }
+
+    function deleteSubmission(index) {
+        let submissions = JSON.parse(localStorage.getItem("submissions")) || [];
+        submissions.splice(index, 1);
+        localStorage.setItem("submissions", JSON.stringify(submissions));
+        loadSubmissions();
+    }
+
+    window.onload = loadSubmissions;
+</script>
+    
 <script>
     function loadSubmissions() {
         const submissionsContainer = document.getElementById("submissionsContainer");
