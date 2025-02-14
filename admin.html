@@ -8,6 +8,17 @@
 </head>
 <body>
 
+<script>
+    // Simple Admin Access Control
+    const adminPassword = "Admin123"; // Change this to a secure password
+
+    const userInput = prompt("Enter Admin Password:");
+    if (userInput !== adminPassword) {
+        alert("Access Denied!");
+        window.location.href = "index.html"; // Redirect to home if incorrect
+    }
+</script>
+
 <header>
     <h1>Admin Panel</h1>
 </header>
