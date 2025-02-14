@@ -15,7 +15,9 @@
 <section>
     <form id="cleanupForm">
         <label for="location">Enter Cleanup Location:</label>
-        <input type="text" id="location" placeholder="City, Street, or Landmark" required>
+        <input type="text" id="location" placeholder="City, Street, or Landmark">
+
+        <button type="button" onclick="getLocation()">Use My GPS Location</button>
 
         <label for="photo">Upload Cleanup Photo:</label>
         <input type="file" id="photo" accept="image/*" required>
@@ -27,16 +29,29 @@
 </section>
 
 <script>
+    function getLocation() {
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(position => {
+                const lat = position.coords.latitude;
+                const lon = position.coords.longitude;
+                document.getElementById("location").value = Lat: ${lat}, Lon: ${lon};
+            }, error => {
+                alert("GPS Location could not be retrieved.");
+            });
+        } else {
+            alert("Geolocation is not supported by this browser.");
+        }
+    }
+
     document.getElementById("cleanupForm").addEventListener("submit", function(event) {
         event.preventDefault();
 
-        // Get user details
         const username = localStorage.getItem("username") || "Anonymous";
         const location = document.getElementById("location").value.trim();
         const file = document.getElementById("photo").files[0];
 
         if (!file || location === "") {
-            alert("Please enter a location and upload a photo!");
+            alert("Please enter a location or use GPS, and upload a photo!");
             return;
         }
 
@@ -44,21 +59,17 @@
         reader.readAsDataURL(file);
         reader.onload = function() {
             const photoData = reader.result;
-
-            // Get existing submissions or create a new array
             let submissions = JSON.parse(localStorage.getItem("submissions")) || [];
 
-            // Add new cleanup entry with location and timestamp
             submissions.push({
                 username,
                 location,
                 photo: photoData,
-                timestamp: new Date().toLocaleString()
+                timestamp: new Date().toLocaleString(),
+                approved: false // Default: Not approved
             });
 
-            // Save data
             localStorage.setItem("submissions", JSON.stringify(submissions));
-
             document.getElementById("logMessage").textContent = "Cleanup logged successfully!";
         };
     });
