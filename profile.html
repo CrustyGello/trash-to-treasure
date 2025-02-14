@@ -1,180 +1,137 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Profile - Trash to Treasure</title>
-  <link rel="stylesheet" href="styles.css">
-  <style>
-    /* Minimal inline CSS for the settings and language prompt modal */
-    #settingsModal, #languagePromptModal {
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: #fff;
-      padding: 20px;
-      border: 1px solid #ccc;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-      z-index: 100;
-    }
-
-    /* Language Prompt Modal Style */
-    #languagePromptModal {
-      display: block; /* Show the modal initially */
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - Trash to Treasure</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        /* Add the modal styles for language selection */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .btn {
+            padding: 10px 20px;
+            cursor: pointer;
+            margin-top: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
 
-  <header>
-    <h1 id="headerTitle">Your Profile</h1>
-  </header>
+<header>
+    <h1>Your Profile</h1>
+</header>
 
-  <section class="profile-section">
-    <h2 id="welcomeMessage">Welcome, <span id="userName"></span></h2>
-    <p id="emailMessage">Email: <span id="userEmail"></span></p>
-    <button onclick="goToHomePage()" id="homeButton">Go to Home Page</button>
-    <button onclick="showSettings()" id="settingsButton">Settings</button>
-  </section>
+<section class="profile-section">
+    <h2>Welcome, <span id="userName"></span></h2>
+    <p>Email: <span id="userEmail"></span></p>
+    <!-- Button to open language settings -->
+    <button class="btn" onclick="openLanguageSettings()">Change Language</button>
+</section>
 
-  <!-- Language Selection Prompt Modal -->
-  <div id="languagePromptModal">
-    <h3 id="languagePromptTitle">Choose Your Language</h3>
-    <select id="languagePromptSelect" onchange="selectLanguagePrompt()">
-      <option value="en">English</option>
-      <option value="af">Afrikaans</option>
-      <option value="zu">Zulu</option>
-    </select>
-    <br><br>
-    <button onclick="selectLanguagePrompt()">Confirm</button>
-  </div>
-
-  <!-- Settings Modal (hidden by default) -->
-  <div id="settingsModal" style="display: none;">
-    <h3 id="settingsTitle">Settings</h3>
-    <label for="languageSelect" id="languageLabel">Select Language:</label>
-    <select id="languageSelect" onchange="changeLanguage()">
-      <option value="en">English</option>
-      <option value="af">Afrikaans</option>
-      <option value="zu">Zulu</option>
-    </select>
-    <br><br>
-    <button onclick="closeSettings()" id="closeSettingsButton">Close</button>
-  </div>
-
-  <footer>
+<footer>
     <p>&copy; 2025 Trash to Treasure</p>
-  </footer>
+</footer>
 
-  <!-- Bottom Navigation Bar -->
-  <nav class="bottom-nav">
-    <a href="index.html" class="nav-item" id="navHome">🏠 <span>Home</span></a>
-    <a href="rewards.html" class="nav-item" id="navRewards">🎁 <span>Rewards</span></a>
-    <a href="events.html" class="nav-item" id="navEvents">📅 <span>Events</span></a>
-    <a href="profile.html" class="nav-item" id="navProfile">👤 <span>Profile</span></a>
-  </nav>
+<!-- Language Selection Modal -->
+<div id="languagePromptModal" class="modal">
+    <div class="modal-content">
+        <h2>Select Language</h2>
+        <button class="btn" onclick="setLanguage('en')">English</button>
+        <button class="btn" onclick="setLanguage('af')">Afrikaans</button>
+        <button class="btn" onclick="setLanguage('zu')">Zulu</button>
+    </div>
+</div>
 
-  <script>
+<!-- Language Settings Modal -->
+<div id="languageSettingsModal" class="modal">
+    <div class="modal-content">
+        <h2>Language Settings</h2>
+        <button class="btn" onclick="setLanguage('en')">English</button>
+        <button class="btn" onclick="setLanguage('af')">Afrikaans</button>
+        <button class="btn" onclick="setLanguage('zu')">Zulu</button>
+        <button class="btn" onclick="closeModal('languageSettingsModal')">Close</button>
+    </div>
+</div>
+
+<script>
+    // Check if a language is already set in localStorage
+    function checkLanguage() {
+        const language = localStorage.getItem('language');
+        if (!language) {
+            document.getElementById('languagePromptModal').style.display = 'flex'; // Show language selection on first visit
+        } else {
+            document.body.setAttribute('lang', language); // Apply the selected language
+        }
+    }
+
+    // Set the selected language and save to localStorage
+    function setLanguage(lang) {
+        localStorage.setItem('language', lang);
+        document.body.setAttribute('lang', lang); // Apply the language to the page
+        closeModal('languagePromptModal'); // Close the modal after selection
+    }
+
+    // Open the language settings modal
+    function openLanguageSettings() {
+        document.getElementById('languageSettingsModal').style.display = 'flex';
+    }
+
+    // Close modal by id
+    function closeModal(modalId) {
+        document.getElementById(modalId).style.display = 'none';
+    }
+
     // Retrieve user data from localStorage
     const username = localStorage.getItem("username");
     const email = localStorage.getItem("email");
 
-    // If user data is missing, redirect to signup page
+    // Check if user is logged in
     if (username && email) {
-      document.getElementById("userName").innerText = username;
-      document.getElementById("userEmail").innerText = email;
+        document.getElementById("userName").innerText = username;
+        document.getElementById("userEmail").innerText = email;
     } else {
-      window.location.href = "signup.html";
+        window.location.href = "signup.html";
     }
 
-    function goToHomePage() {
-      window.location.href = "index.html";
-    }
+    // Run the language check function
+    checkLanguage();
+</script>
 
-    // Show the settings modal and set the dropdown to the current language
-    function showSettings() {
-      document.getElementById("settingsModal").style.display = "block";
-      const currentLang = localStorage.getItem("language") || "en";
-      document.getElementById("languageSelect").value = currentLang;
-    }
-
-    function closeSettings() {
-      document.getElementById("settingsModal").style.display = "none";
-    }
-
-    // Update the language preference when the user changes it
-    function changeLanguage() {
-      const selectedLanguage = document.getElementById("languageSelect").value;
-      localStorage.setItem("language", selectedLanguage);
-      updateLanguage(selectedLanguage);
-    }
-
-    // Update the displayed text based on the selected language
-    function updateLanguage(lang) {
-      const texts = {
-        en: {
-          headerTitle: "Your Profile",
-          welcomeMessage: "Welcome,",
-          emailMessage: "Email:",
-          homeButton: "Go to Home Page",
-          settingsButton: "Settings",
-          settingsTitle: "Settings",
-          languageLabel: "Select Language:",
-          languagePromptTitle: "Choose Your Language",
-        },
-        af: {
-          headerTitle: "Jou Profiel",
-          welcomeMessage: "Welkom,",
-          emailMessage: "E-pos:",
-          homeButton: "Gaan na Tuisblad",
-          settingsButton: "Instellings",
-          settingsTitle: "Instellings",
-          languageLabel: "Kies Taal:",
-          languagePromptTitle: "Kies jou Taal",
-        },
-        zu: {
-          headerTitle: "Iphrofayela Yakho",
-          welcomeMessage: "Siyakwamukela,",
-          emailMessage: "I-imeyili:",
-          homeButton: "Iya eKhaya",
-          settingsButton: "Izilungiselelo",
-          settingsTitle: "Izilungiselelo",
-          languageLabel: "Khetha Ulimi:",
-          languagePromptTitle: "Khetha Ulimi Lwakho",
-        }
-      };
-
-      const selectedTexts = texts[lang] || texts["en"];
-      document.getElementById("headerTitle").innerText = selectedTexts.headerTitle;
-      
-      // Update the welcome message text
-      document.getElementById("welcomeMessage").childNodes[0].nodeValue = selectedTexts.welcomeMessage + " ";
-      
-      // Update the email label (assumes the text node is the first child)
-      document.getElementById("emailMessage").childNodes[0].nodeValue = selectedTexts.emailMessage + " ";
-      
-      document.getElementById("homeButton").innerText = selectedTexts.homeButton;
-      document.getElementById("settingsButton").innerText = selectedTexts.settingsButton;
-      document.getElementById("settingsTitle").innerText = selectedTexts.settingsTitle;
-      document.getElementById("languageLabel").innerText = selectedTexts.languageLabel;
-      document.getElementById("languagePromptTitle").innerText = selectedTexts.languagePromptTitle;
-    }
-
-    // Handle language prompt selection
-    function selectLanguagePrompt() {
-      const selectedLang = document.getElementById("languagePromptSelect").value;
-      localStorage.setItem("language", selectedLang);
-      updateLanguage(selectedLang);
-
-      // Close the prompt modal after selection
-      document.getElementById("languagePromptModal").style.display = "none";
-    }
-
-    // Initialize the page with the saved language preference
-    const savedLang = localStorage.getItem("language") || "en";
-    updateLanguage(savedLang);
-  </script>
+<!-- Bottom Navigation Bar -->
+<nav class="bottom-nav">
+    <a href="index.html" class="nav-item" id="home">
+        🏠 <span>Home</span>
+    </a>
+    <a href="rewards.html" class="nav-item" id="rewards">
+        🎁 <span>Rewards</span>
+    </a>
+    <a href="events.html" class="nav-item" id="events">
+        📅 <span>Events</span>
+    </a>
+    <a href="profile.html" class="nav-item" id="profile">
+        👤 <span>Profile</span>
+    </a>
+</nav>
 
 </body>
 </html>
