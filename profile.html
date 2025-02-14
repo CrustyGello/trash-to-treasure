@@ -6,8 +6,8 @@
   <title>Profile - Trash to Treasure</title>
   <link rel="stylesheet" href="styles.css">
   <style>
-    /* Minimal inline CSS for the settings modal */
-    #settingsModal {
+    /* Minimal inline CSS for the settings and language prompt modal */
+    #settingsModal, #languagePromptModal {
       position: fixed;
       top: 50%;
       left: 50%;
@@ -17,6 +17,11 @@
       border: 1px solid #ccc;
       box-shadow: 0 2px 10px rgba(0,0,0,0.1);
       z-index: 100;
+    }
+
+    /* Language Prompt Modal Style */
+    #languagePromptModal {
+      display: block; /* Show the modal initially */
     }
   </style>
 </head>
@@ -32,6 +37,18 @@
     <button onclick="goToHomePage()" id="homeButton">Go to Home Page</button>
     <button onclick="showSettings()" id="settingsButton">Settings</button>
   </section>
+
+  <!-- Language Selection Prompt Modal -->
+  <div id="languagePromptModal">
+    <h3 id="languagePromptTitle">Choose Your Language</h3>
+    <select id="languagePromptSelect" onchange="selectLanguagePrompt()">
+      <option value="en">English</option>
+      <option value="af">Afrikaans</option>
+      <option value="zu">Zulu</option>
+    </select>
+    <br><br>
+    <button onclick="selectLanguagePrompt()">Confirm</button>
+  </div>
 
   <!-- Settings Modal (hidden by default) -->
   <div id="settingsModal" style="display: none;">
@@ -103,7 +120,8 @@
           homeButton: "Go to Home Page",
           settingsButton: "Settings",
           settingsTitle: "Settings",
-          languageLabel: "Select Language:"
+          languageLabel: "Select Language:",
+          languagePromptTitle: "Choose Your Language",
         },
         af: {
           headerTitle: "Jou Profiel",
@@ -112,7 +130,8 @@
           homeButton: "Gaan na Tuisblad",
           settingsButton: "Instellings",
           settingsTitle: "Instellings",
-          languageLabel: "Kies Taal:"
+          languageLabel: "Kies Taal:",
+          languagePromptTitle: "Kies jou Taal",
         },
         zu: {
           headerTitle: "Iphrofayela Yakho",
@@ -121,7 +140,8 @@
           homeButton: "Iya eKhaya",
           settingsButton: "Izilungiselelo",
           settingsTitle: "Izilungiselelo",
-          languageLabel: "Khetha Ulimi:"
+          languageLabel: "Khetha Ulimi:",
+          languagePromptTitle: "Khetha Ulimi Lwakho",
         }
       };
 
@@ -138,6 +158,17 @@
       document.getElementById("settingsButton").innerText = selectedTexts.settingsButton;
       document.getElementById("settingsTitle").innerText = selectedTexts.settingsTitle;
       document.getElementById("languageLabel").innerText = selectedTexts.languageLabel;
+      document.getElementById("languagePromptTitle").innerText = selectedTexts.languagePromptTitle;
+    }
+
+    // Handle language prompt selection
+    function selectLanguagePrompt() {
+      const selectedLang = document.getElementById("languagePromptSelect").value;
+      localStorage.setItem("language", selectedLang);
+      updateLanguage(selectedLang);
+
+      // Close the prompt modal after selection
+      document.getElementById("languagePromptModal").style.display = "none";
     }
 
     // Initialize the page with the saved language preference
