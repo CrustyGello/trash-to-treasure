@@ -38,12 +38,12 @@
 <body>
 
 <header>
-    <h1>Your Profile</h1>
+    <h1 id="profileTitle">Your Profile</h1>
 </header>
 
 <section class="profile-section">
-    <h2>Welcome, <span id="userName"></span></h2>
-    <p>Email: <span id="userEmail"></span></p>
+    <h2 id="welcomeMessage">Welcome, <span id="userName"></span></h2>
+    <p id="userEmailLabel">Email: <span id="userEmail"></span></p>
     <!-- Button to open language settings -->
     <button class="btn" onclick="openLanguageSettings()">Change Language</button>
 </section>
@@ -74,21 +74,53 @@
 </div>
 
 <script>
+    // Language strings for different languages
+    const languageStrings = {
+        "en": {
+            "profileTitle": "Your Profile",
+            "welcomeMessage": "Welcome, ",
+            "userEmailLabel": "Email: ",
+            "changeLanguageBtn": "Change Language"
+        },
+        "af": {
+            "profileTitle": "Jou Profiel",
+            "welcomeMessage": "Welkom, ",
+            "userEmailLabel": "E-pos: ",
+            "changeLanguageBtn": "Verander Taal"
+        },
+        "zu": {
+            "profileTitle": "Iphrofayela Yakho",
+            "welcomeMessage": "Siyakwamukela, ",
+            "userEmailLabel": "I-imeyili: ",
+            "changeLanguageBtn": "Shintsha Ulimi"
+        }
+    };
+
     // Check if a language is already set in localStorage
     function checkLanguage() {
         const language = localStorage.getItem('language');
         if (!language) {
             document.getElementById('languagePromptModal').style.display = 'flex'; // Show language selection on first visit
         } else {
-            document.body.setAttribute('lang', language); // Apply the selected language
+            applyLanguage(language); // Apply saved language
         }
     }
 
-    // Set the selected language and save to localStorage
+    // Apply selected language
+    function applyLanguage(language) {
+        localStorage.setItem('language', language); // Save the language in localStorage
+        document.body.setAttribute('lang', language); // Apply language to body element
+        // Apply the language-specific strings to the page
+        document.getElementById("profileTitle").innerText = languageStrings[language]["profileTitle"];
+        document.getElementById("welcomeMessage").innerText = languageStrings[language]["welcomeMessage"];
+        document.getElementById("userEmailLabel").innerText = languageStrings[language]["userEmailLabel"];
+        document.querySelector(".btn").innerText = languageStrings[language]["changeLanguageBtn"];
+        closeModal('languagePromptModal'); // Close the language selection modal
+    }
+
+    // Set the selected language
     function setLanguage(lang) {
-        localStorage.setItem('language', lang);
-        document.body.setAttribute('lang', lang); // Apply the language to the page
-        closeModal('languagePromptModal'); // Close the modal after selection
+        applyLanguage(lang);
     }
 
     // Open the language settings modal
