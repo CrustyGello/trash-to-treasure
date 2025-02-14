@@ -7,34 +7,54 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
-        <h1>Log Cleanup</h1>
-    </header>
-    <section>
-        <form id="cleanupForm">
-            <label for="photo">Upload Cleanup Photo:</label>
-            <input type="file" id="photo" accept="image/*">
-            <button type="submit">Submit</button>
-        </form>
-        <p id="logMessage"></p>
-    </section>
-    <footer>
-        <p>&copy; 2025 Trash to Treasure</p>
-    </footer>
-   <!-- Bottom Navigation Bar -->
-<nav class="bottom-nav">
-    <a href="index.html" class="nav-item" id="home">
-        🏠 <span>Home</span>
-    </a>
-    <a href="rewards.html" class="nav-item" id="rewards">
-        🎁 <span>Rewards</span>
-    </a>
-    <a href="events.html" class="nav-item" id="events">
-        📅 <span>Events</span>
-    </a>
-    <a href="signup.html" class="nav-item" id="profile">
-        👤 <span>Profile</span>
-    </a>
-</nav>
+
+<header>
+    <h1>Log Cleanup</h1>
+</header>
+
+<section>
+    <form id="cleanupForm">
+        <label for="photo">Upload Cleanup Photo:</label>
+        <input type="file" id="photo" accept="image/*" required>
+        <button type="submit">Submit</button>
+    </form>
+
+    <p id="logMessage"></p>
+</section>
+
+<script>
+    document.getElementById("cleanupForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        // Get username and file
+        const username = localStorage.getItem("username") || "Anonymous";
+        const file = document.getElementById("photo").files[0];
+
+        if (!file) {
+            alert("Please upload a photo!");
+            return;
+        }
+
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = function() {
+            const photoData = reader.result;
+
+            // Get existing submissions or create new array
+            let submissions = JSON.parse(localStorage.getItem("submissions")) || [];
+            
+            // Save new submission
+            submissions.push({ username, photo: photoData });
+            localStorage.setItem("submissions", JSON.stringify(submissions));
+
+            document.getElementById("logMessage").textContent = "Cleanup logged successfully!";
+        };
+    });
+</script>
+
+<footer>
+    <p>&copy; 2025 Trash to Treasure</p>
+</footer>
+
 </body>
 </html>
