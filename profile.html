@@ -1,56 +1,149 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Profile - Trash to Treasure</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile - Trash to Treasure</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    /* Minimal inline CSS for the settings modal */
+    #settingsModal {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background-color: #fff;
+      padding: 20px;
+      border: 1px solid #ccc;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+      z-index: 100;
+    }
+  </style>
 </head>
 <body>
 
-<header>
-    <h1>Your Profile</h1>
-</header>
+  <header>
+    <h1 id="headerTitle">Your Profile</h1>
+  </header>
 
-<section class="profile-section">
-    <h2>Welcome, <span id="userName"></span></h2>
-    <p>Email: <span id="userEmail"></span></p>
-</section>
+  <section class="profile-section">
+    <h2 id="welcomeMessage">Welcome, <span id="userName"></span></h2>
+    <p id="emailMessage">Email: <span id="userEmail"></span></p>
+    <button onclick="goToHomePage()" id="homeButton">Go to Home Page</button>
+    <button onclick="showSettings()" id="settingsButton">Settings</button>
+  </section>
 
-<footer>
+  <!-- Settings Modal (hidden by default) -->
+  <div id="settingsModal" style="display: none;">
+    <h3 id="settingsTitle">Settings</h3>
+    <label for="languageSelect" id="languageLabel">Select Language:</label>
+    <select id="languageSelect" onchange="changeLanguage()">
+      <option value="en">English</option>
+      <option value="af">Afrikaans</option>
+      <option value="zu">Zulu</option>
+    </select>
+    <br><br>
+    <button onclick="closeSettings()" id="closeSettingsButton">Close</button>
+  </div>
+
+  <footer>
     <p>&copy; 2025 Trash to Treasure</p>
-</footer>
+  </footer>
 
-<script>
+  <!-- Bottom Navigation Bar -->
+  <nav class="bottom-nav">
+    <a href="index.html" class="nav-item" id="navHome">🏠 <span>Home</span></a>
+    <a href="rewards.html" class="nav-item" id="navRewards">🎁 <span>Rewards</span></a>
+    <a href="events.html" class="nav-item" id="navEvents">📅 <span>Events</span></a>
+    <a href="profile.html" class="nav-item" id="navProfile">👤 <span>Profile</span></a>
+  </nav>
+
+  <script>
     // Retrieve user data from localStorage
     const username = localStorage.getItem("username");
     const email = localStorage.getItem("email");
 
-    // Check if user is logged in
+    // If user data is missing, redirect to signup page
     if (username && email) {
-        // Display the user's name and email
-        document.getElementById("userName").innerText = username;
-        document.getElementById("userEmail").innerText = email;
+      document.getElementById("userName").innerText = username;
+      document.getElementById("userEmail").innerText = email;
     } else {
-        // If no user data exists, redirect to the sign-up page
-        window.location.href = "signup.html";
+      window.location.href = "signup.html";
     }
-</script>
-<!-- Bottom Navigation Bar -->
-<nav class="bottom-nav">
-    <a href="index.html" class="nav-item" id="home">
-        🏠 <span>Home</span>
-    </a>
-    <a href="rewards.html" class="nav-item" id="rewards">
-        🎁 <span>Rewards</span>
-    </a>
-    <a href="events.html" class="nav-item" id="events">
-        📅 <span>Events</span>
-    </a>
-    <a href="signup.html" class="nav-item" id="profile">
-        👤 <span>Profile</span>
-    </a>
-</nav>
+
+    function goToHomePage() {
+      window.location.href = "index.html";
+    }
+
+    // Show the settings modal and set the dropdown to the current language
+    function showSettings() {
+      document.getElementById("settingsModal").style.display = "block";
+      const currentLang = localStorage.getItem("language") || "en";
+      document.getElementById("languageSelect").value = currentLang;
+    }
+
+    function closeSettings() {
+      document.getElementById("settingsModal").style.display = "none";
+    }
+
+    // Update the language preference when the user changes it
+    function changeLanguage() {
+      const selectedLanguage = document.getElementById("languageSelect").value;
+      localStorage.setItem("language", selectedLanguage);
+      updateLanguage(selectedLanguage);
+    }
+
+    // Update the displayed text based on the selected language
+    function updateLanguage(lang) {
+      const texts = {
+        en: {
+          headerTitle: "Your Profile",
+          welcomeMessage: "Welcome,",
+          emailMessage: "Email:",
+          homeButton: "Go to Home Page",
+          settingsButton: "Settings",
+          settingsTitle: "Settings",
+          languageLabel: "Select Language:"
+        },
+        af: {
+          headerTitle: "Jou Profiel",
+          welcomeMessage: "Welkom,",
+          emailMessage: "E-pos:",
+          homeButton: "Gaan na Tuisblad",
+          settingsButton: "Instellings",
+          settingsTitle: "Instellings",
+          languageLabel: "Kies Taal:"
+        },
+        zu: {
+          headerTitle: "Iphrofayela Yakho",
+          welcomeMessage: "Siyakwamukela,",
+          emailMessage: "I-imeyili:",
+          homeButton: "Iya eKhaya",
+          settingsButton: "Izilungiselelo",
+          settingsTitle: "Izilungiselelo",
+          languageLabel: "Khetha Ulimi:"
+        }
+      };
+
+      const selectedTexts = texts[lang] || texts["en"];
+      document.getElementById("headerTitle").innerText = selectedTexts.headerTitle;
+      
+      // Update the welcome message text
+      document.getElementById("welcomeMessage").childNodes[0].nodeValue = selectedTexts.welcomeMessage + " ";
+      
+      // Update the email label (assumes the text node is the first child)
+      document.getElementById("emailMessage").childNodes[0].nodeValue = selectedTexts.emailMessage + " ";
+      
+      document.getElementById("homeButton").innerText = selectedTexts.homeButton;
+      document.getElementById("settingsButton").innerText = selectedTexts.settingsButton;
+      document.getElementById("settingsTitle").innerText = selectedTexts.settingsTitle;
+      document.getElementById("languageLabel").innerText = selectedTexts.languageLabel;
+    }
+
+    // Initialize the page with the saved language preference
+    const savedLang = localStorage.getItem("language") || "en";
+    updateLanguage(savedLang);
+  </script>
 
 </body>
 </html>
