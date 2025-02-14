@@ -44,5 +44,14 @@
         👤 <span>Profile</span>
     </a>
 </nav>
+<script>
+    // Check if the user is signed in
+    const username = localStorage.getItem("username");
+    const loggedIn = localStorage.getItem("loggedIn");
+
+    if (loggedIn === "true" && username) {
+        document.getElementById("greeting").textContent = "Welcome back, " + username + "!";
+    }
+</script>
 </body>
 </html>
