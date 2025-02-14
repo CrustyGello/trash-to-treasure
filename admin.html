@@ -3,76 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Log Cleanup</title>
+    <title>Admin Panel</title>
     <link rel="stylesheet" href="styles.css">
+    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY"></script>
 </head>
 <body>
 
+<script>
+    const adminPassword = "Admin123"; // Change this to a secure password
+    const userInput = prompt("Enter Admin Password:");
+    if (userInput !== adminPassword) {
+        alert("Access Denied!");
+        window.location.href = "index.html";
+    }
+</script>
+
 <header>
-    <h1>Log Cleanup</h1>
+    <h1>Admin Panel</h1>
 </header>
 
 <section>
-    <form id="cleanupForm">
-        <label for="location">Enter Cleanup Location:</label>
-        <input type="text" id="location" placeholder="City, Street, or Landmark">
+    <h2>Submitted Cleanups</h2>
+    <div id="submissionsContainer"></div>
+</section>
 
-        <button type="button" onclick="getLocation()">Use My GPS Location</button>
-
-        <label for="photo">Upload Cleanup Photo:</label>
-        <input type="file" id="photo" accept="image/*" required>
-
-        <button type="submit">Submit</button>
-    </form>
-
-    <p id="logMessage"></p>
+<section>
+    <h2>Cleanup Locations</h2>
+    <div id="map" style="width: 100%; height: 400px;"></div>
 </section>
 
 <script>
-    function getLocation() {
-        if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(position => {
-                const lat = position.coords.latitude;
-                const lon = position.coords.longitude;
-                document.getElementById("location").value = Lat: ${lat}, Lon: ${lon};
-            }, error => {
-                alert("GPS Location could not be retrieved.");
-            });
-        } else {
-            alert("Geolocation is not supported by this browser.");
-        }
-    }
+    function loadSubmissions() {
+        const submissionsContainer = document.getElementById("submissionsContainer");
+        submissionsContainer.innerHTML = "";
 
-    document.getElementById("cleanupForm").addEventListener("submit", function(event) {
-        event.preventDefault();
+        let submissions = JSON.parse(localStorage.getItem("submissions")) || [];
 
-        const username = localStorage.getItem("username") || "Anonymous";
-        const location = document.getElementById("location").value.trim();
-        const file = document.getElementById("photo").files[0];
-
-        if (!file || location === "") {
-            alert("Please enter a location or use GPS, and upload a photo!");
+        if (submissions.length === 0) {
+            submissionsContainer.innerHTML = "<p>No submissions yet.</p>";
             return;
         }
 
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = function() {
-            const photoData = reader.result;
-            let submissions = JSON.parse(localStorage.getItem("submissions")) || [];
+        submissions.forEach((submission, index) => {
+            const submissionDiv = document.createElement("div");
+            submissionDiv.classList.add("submission");
 
-            submissions.push({
-                username,
-                location,
-                photo: photoData,
-                timestamp: new Date().toLocaleString(),
-                approved: false // Default: Not approved
-            });
+            submissionDiv.innerHTML = `
+                <p><strong>User:</strong> ${submission.username}</p>
+                <p><strong>Location:</strong> ${submission.location}</p>
+                <p><strong>Timestamp:</strong> ${submission.timestamp}</p>
+                <img src="${submission.photo}" alt="Cleanup Photo" style="max-width: 100%; height: auto;">
+                <p><strong>Status:</strong> ${submission.approved ? "✅ Approved" : "❌ Pending Approval"}</p>
+                <button onclick="approveSubmission(${index})">Approve</button>
+                <button onclick="deleteSubmission(${index})">Delete</button>
+                <hr>
+            `;
+            submissionsContainer.appendChild(submissionDiv);
+        });
 
-            localStorage.setItem("submissions", JSON.stringify(submissions));
-            document.getElementById("logMessage").textContent = "Cleanup logged successfully!";
-        };
-    });
+        initMap(submissions);
+    }
+
+    function approveSubmission(index) {
+        let submissions = JSON.parse(localStorage.getItem("submissions")) || [];
+        submissions[index].approved = true;
+        localStorage.setItem("submissions", JSON.stringify(submissions));
+        loadSubmissions();
+    }
+
+    function deleteSubmission(index) {
+        let submissions = JSON.parse(localStorage.getItem("submissions")) || [];
+        submissions.splice(index, 1);
+        localStorage.setItem("submissions", JSON.stringify(submissions));
+        loadSubmissions();
+    }
+
+    function initMap(submissions) {
+        const map = new google.maps.Map(document.getElementById("map"), {
+            zoom: 3,
+            center: { lat: 0, lng: 0 },
+        });
+
+        submissions.forEach(submission => {
+            if (submission.approved && submission.location.startsWith("Lat:")) {
+                const coords = submission.location.match(/Lat:\s*([\d.-]+),\s*Lon:\s*([\d.-]+)/);
+                if (coords) {
+                    const lat = parseFloat(coords[1]);
+                    const lon = parseFloat(coords[2]);
+
+                    new google.maps.Marker({
+                        position: { lat, lng: lon },
+                        map,
+                        title: submission.username,
+                    });
+                }
+            }
+        });
+    }
+
+    window.onload = () => {
+        loadSubmissions();
+    };
 </script>
 
 <footer>
