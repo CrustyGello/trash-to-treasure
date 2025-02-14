@@ -3,112 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel</title>
+    <title>Admin Panel - Trash to Treasure</title>
     <link rel="stylesheet" href="styles.css">
-    <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY"></script>
 </head>
 <body>
+    <header>
+        <h1>Admin Panel</h1>
+    </header>
 
-<script>
-    const adminPassword = "Admin123"; // Change this to a secure password
-    const userInput = prompt("Enter Admin Password:");
-    if (userInput !== adminPassword) {
-        alert("Access Denied!");
-        window.location.href = "index.html";
-    }
-</script>
+    <!-- Admin Login Section -->
+    <section id="admin-login">
+        <h2>Admin Login</h2>
+        <input type="password" id="adminPassword" placeholder="Enter Admin Password">
+        <button onclick="loginAsAdmin()">Login</button>
+        <p id="loginMessage"></p>
+    </section>
 
-<header>
-    <h1>Admin Panel</h1>
-</header>
+    <!-- Cleanup Submissions (Hidden until logged in) -->
+    <section id="submissions" style="display: none;">
+        <h2>Cleanup Submissions</h2>
+        <ul id="submissionList"></ul>
+    </section>
 
-<section>
-    <h2>Submitted Cleanups</h2>
-    <div id="submissionsContainer"></div>
-</section>
+    <script>
+        const adminPassword = "Admin123"; // Change this to your secure password
 
-<section>
-    <h2>Cleanup Locations</h2>
-    <div id="map" style="width: 100%; height: 400px;"></div>
-</section>
-
-<script>
-    function loadSubmissions() {
-        const submissionsContainer = document.getElementById("submissionsContainer");
-        submissionsContainer.innerHTML = "";
-
-        let submissions = JSON.parse(localStorage.getItem("submissions")) || [];
-
-        if (submissions.length === 0) {
-            submissionsContainer.innerHTML = "<p>No submissions yet.</p>";
-            return;
+        function loginAsAdmin() {
+            const enteredPassword = document.getElementById("adminPassword").value;
+            if (enteredPassword === adminPassword) {
+                document.getElementById("admin-login").style.display = "none";
+                document.getElementById("submissions").style.display = "block";
+                loadSubmissions();
+            } else {
+                document.getElementById("loginMessage").textContent = "Incorrect password. Try again.";
+            }
         }
 
-        submissions.forEach((submission, index) => {
-            const submissionDiv = document.createElement("div");
-            submissionDiv.classList.add("submission");
+        function loadSubmissions() {
+            let submissions = JSON.parse(localStorage.getItem("cleanups")) || [];
+            let submissionList = document.getElementById("submissionList");
+            submissionList.innerHTML = ""; 
 
-            submissionDiv.innerHTML = `
-                <p><strong>User:</strong> ${submission.username}</p>
-                <p><strong>Location:</strong> ${submission.location}</p>
-                <p><strong>Timestamp:</strong> ${submission.timestamp}</p>
-                <img src="${submission.photo}" alt="Cleanup Photo" style="max-width: 100%; height: auto;">
-                <p><strong>Status:</strong> ${submission.approved ? "✅ Approved" : "❌ Pending Approval"}</p>
-                <button onclick="approveSubmission(${index})">Approve</button>
-                <button onclick="deleteSubmission(${index})">Delete</button>
-                <hr>
-            `;
-            submissionsContainer.appendChild(submissionDiv);
-        });
-
-        initMap(submissions);
-    }
-
-    function approveSubmission(index) {
-        let submissions = JSON.parse(localStorage.getItem("submissions")) || [];
-        submissions[index].approved = true;
-        localStorage.setItem("submissions", JSON.stringify(submissions));
-        loadSubmissions();
-    }
-
-    function deleteSubmission(index) {
-        let submissions = JSON.parse(localStorage.getItem("submissions")) || [];
-        submissions.splice(index, 1);
-        localStorage.setItem("submissions", JSON.stringify(submissions));
-        loadSubmissions();
-    }
-
-    function initMap(submissions) {
-        const map = new google.maps.Map(document.getElementById("map"), {
-            zoom: 3,
-            center: { lat: 0, lng: 0 },
-        });
-
-        submissions.forEach(submission => {
-            if (submission.approved && submission.location.startsWith("Lat:")) {
-                const coords = submission.location.match(/Lat:\s*([\d.-]+),\s*Lon:\s*([\d.-]+)/);
-                if (coords) {
-                    const lat = parseFloat(coords[1]);
-                    const lon = parseFloat(coords[2]);
-
-                    new google.maps.Marker({
-                        position: { lat, lng: lon },
-                        map,
-                        title: submission.username,
-                    });
-                }
+            if (submissions.length === 0) {
+                submissionList.innerHTML = "<p>No submissions yet.</p>";
+                return;
             }
-        });
-    }
 
-    window.onload = () => {
-        loadSubmissions();
-    };
-</script>
+            submissions.forEach((submission, index) => {
+                let li = document.createElement("li");
+                li.innerHTML = `
+                    <strong>Location:</strong> ${submission.location} <br>
+                    <img src="${submission.photo}" width="100"><br>
+                    <button onclick="approveSubmission(${index})">Approve</button>
+                    <button onclick="rejectSubmission(${index})">Reject</button>
+                `;
+                submissionList.appendChild(li);
+            });
+        }
 
-<footer>
-    <p>&copy; 2025 Trash to Treasure</p>
-</footer>
+        function approveSubmission(index) {
+            let submissions = JSON.parse(localStorage.getItem("cleanups")) || [];
+            alert(Cleanup at ${submissions[index].location} approved!);
+            submissions.splice(index, 1);
+            localStorage.setItem("cleanups", JSON.stringify(submissions));
+            loadSubmissions();
+        }
+
+        function rejectSubmission(index) {
+            let submissions = JSON.parse(localStorage.getItem("cleanups")) || [];
+            alert(Cleanup at ${submissions[index].location} rejected.);
+            submissions.splice(index, 1);
+            localStorage.setItem("cleanups", JSON.stringify(submissions));
+            loadSubmissions();
+        }
+    </script>
 
 </body>
 </html>
