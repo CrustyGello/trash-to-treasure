@@ -113,6 +113,54 @@
         }
     }
 
+    <h2>Create a Community Event</h2>
+<form id="createEventForm">
+    <label for="eventTitle">Event Title:</label>
+    <input type="text" id="eventTitle" required>
+
+    <label for="eventLocation">Location:</label>
+    <input type="text" id="eventLocation" required>
+
+    <label for="eventStartTime">Start Time:</label>
+    <input type="datetime-local" id="eventStartTime" required>
+
+    <label for="eventEndTime">End Time:</label>
+    <input type="datetime-local" id="eventEndTime" required>
+
+    <button type="submit">Create Event</button>
+</form>
+
+    document.getElementById("createEventForm").addEventListener("submit", function(event) {
+    event.preventDefault();
+
+    // Retrieve form data
+    const eventTitle = document.getElementById("eventTitle").value;
+    const eventLocation = document.getElementById("eventLocation").value;
+    const eventStartTime = document.getElementById("eventStartTime").value;
+    const eventEndTime = document.getElementById("eventEndTime").value;
+
+    // Validate inputs (ensure all fields are filled)
+    if (eventTitle && eventLocation && eventStartTime && eventEndTime) {
+        // Create an event object
+        const eventDetails = {
+            title: eventTitle,
+            location: eventLocation,
+            startTime: eventStartTime,
+            endTime: eventEndTime,
+        };
+
+        // Store the event in localStorage or send to the server (here we store it in localStorage for simplicity)
+        let events = JSON.parse(localStorage.getItem("events")) || [];
+        events.push(eventDetails);
+        localStorage.setItem("events", JSON.stringify(events));
+
+        alert("Event created successfully!");
+        // Optionally, redirect or update the page
+    } else {
+        alert("Please fill in all fields.");
+    }
+});
+    
     function approveEvent(index) {
         let suggestions = JSON.parse(localStorage.getItem("eventSuggestions")) || [];
         let events = JSON.parse(localStorage.getItem("communityEvents")) || [];
