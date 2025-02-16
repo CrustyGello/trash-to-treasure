@@ -26,17 +26,7 @@
         <h2>Turn Trash Into Treasure!</h2>
         <p>Help clean up your community, earn rewards, and make a positive impact!</p>
         <a href="signup.html" class="btn">Get Started</a>
-        window.onload = function() {
-    const username = localStorage.getItem("username");
-    const email = localStorage.getItem("email");
-
-    if (username && email) {
-        const getStartedLink = document.querySelector("a[href='signup.html']");
-        if (getStartedLink) {
-            getStartedLink.style.display = "none";
-        }
-    }
-};
+        
     </section>
     <footer>
         <p>&copy; 2025 Trash to Treasure</p>
