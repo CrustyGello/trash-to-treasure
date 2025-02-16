@@ -10,21 +10,6 @@
     <h1 id="greeting">Welcome to Trash to Treasure</h1>
 </header>
 <body>
-<button id="getStartedBtn">Get Started</button>
-    
-    window.onload = function() {
-    // Check if the user data is in localStorage (meaning they're signed up)
-    const username = localStorage.getItem("username");
-    const email = localStorage.getItem("email");
-
-    // If user data exists, hide the "Get Started" button
-    if (username && email) {
-        const getStartedBtn = document.getElementById("getStartedBtn");
-        if (getStartedBtn) {
-            getStartedBtn.style.display = "none";
-        }
-    }
-};
   
     <header>
         <h1>Trash to Treasure</h1>
