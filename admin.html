@@ -7,76 +7,129 @@
     <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <header>
-        <h1>Admin Panel</h1>
-    </header>
 
-    <!-- Admin Login Section -->
-    <section id="admin-login">
-        <h2>Admin Login</h2>
-        <input type="password" id="adminPassword" placeholder="Enter Admin Password">
-        <button onclick="loginAsAdmin()">Login</button>
-        <p id="loginMessage"></p>
-    </section>
+<header>
+    <h1>Admin Panel</h1>
+</header>
 
-    <!-- Cleanup Submissions (Hidden until logged in) -->
-    <section id="submissions" style="display: none;">
-        <h2>Cleanup Submissions</h2>
-        <ul id="submissionList"></ul>
-    </section>
+<section>
+    <h2>Monitor Cleanup Submissions</h2>
+    <ul id="cleanupList">
+        <!-- Cleanup submissions will be displayed here -->
+    </ul>
+</section>
 
-    <script>
-        const adminPassword = "Admin123"; // Change this to your secure password
+<section>
+    <h2>Schedule a Community Event</h2>
+    <form id="eventForm">
+        <label for="eventName">Event Name:</label>
+        <input type="text" id="eventName" required>
+        
+        <label for="eventLocation">Location:</label>
+        <input type="text" id="eventLocation" required>
+        
+        <label for="eventDate">Date:</label>
+        <input type="date" id="eventDate" required>
+        
+        <label for="eventTime">Time:</label>
+        <input type="time" id="eventTime" required>
 
-        function loginAsAdmin() {
-            const enteredPassword = document.getElementById("adminPassword").value;
-            if (enteredPassword === adminPassword) {
-                document.getElementById("admin-login").style.display = "none";
-                document.getElementById("submissions").style.display = "block";
-                loadSubmissions();
-            } else {
-                document.getElementById("loginMessage").textContent = "Incorrect password. Try again.";
-            }
-        }
+        <button type="submit">Schedule Event</button>
+    </form>
+</section>
 
-        function loadSubmissions() {
-            let submissions = JSON.parse(localStorage.getItem("cleanups")) || [];
-            let submissionList = document.getElementById("submissionList");
-            submissionList.innerHTML = ""; 
+<section>
+    <h2>Suggested Events</h2>
+    <ul id="suggestedEventsList">
+        <!-- Suggested events will be displayed here -->
+    </ul>
+</section>
 
-            if (submissions.length === 0) {
-                submissionList.innerHTML = "<p>No submissions yet.</p>";
-                return;
-            }
+<footer>
+    <p>&copy; 2025 Trash to Treasure</p>
+</footer>
 
-            submissions.forEach((submission, index) => {
+<script>
+    // Load Cleanup Submissions
+    function loadCleanups() {
+        let cleanups = JSON.parse(localStorage.getItem("cleanups")) || [];
+        const list = document.getElementById("cleanupList");
+        list.innerHTML = "";
+
+        if (cleanups.length === 0) {
+            list.innerHTML = "<p>No cleanup submissions yet.</p>";
+        } else {
+            cleanups.forEach((cleanup, index) => {
                 let li = document.createElement("li");
-                li.innerHTML = `
-                    <strong>Location:</strong> ${submission.location} <br>
-                    <img src="${submission.photo}" width="100"><br>
-                    <button onclick="approveSubmission(${index})">Approve</button>
-                    <button onclick="rejectSubmission(${index})">Reject</button>
-                `;
-                submissionList.appendChild(li);
+                li.innerHTML = `<strong>Location:</strong> ${cleanup.location} - <strong>Photo:</strong> <img src="${cleanup.photo}" width="100"> 
+                <button onclick="approveCleanup(${index})">Approve</button>`;
+                list.appendChild(li);
             });
         }
+    }
 
-        function approveSubmission(index) {
-            let submissions = JSON.parse(localStorage.getItem("cleanups")) || [];
-            alert(Cleanup at ${submissions[index].location} approved!);
-            submissions.splice(index, 1);
-            localStorage.setItem("cleanups", JSON.stringify(submissions));
-            loadSubmissions();
-        }
+    function approveCleanup(index) {
+        let cleanups = JSON.parse(localStorage.getItem("cleanups")) || [];
+        cleanups.splice(index, 1);
+        localStorage.setItem("cleanups", JSON.stringify(cleanups));
+        loadCleanups();
+        alert("Cleanup approved!");
+    }
 
-        function rejectSubmission(index) {
-            let submissions = JSON.parse(localStorage.getItem("cleanups")) || [];
-            alert(Cleanup at ${submissions[index].location} rejected.);
-            submissions.splice(index, 1);
-            localStorage.setItem("cleanups", JSON.stringify(submissions));
-            loadSubmissions();
+    // Schedule Community Event
+    document.getElementById("eventForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+
+        const name = document.getElementById("eventName").value;
+        const location = document.getElementById("eventLocation").value;
+        const date = document.getElementById("eventDate").value;
+        const time = document.getElementById("eventTime").value;
+
+        const eventData = { name, location, date, time };
+
+        let events = JSON.parse(localStorage.getItem("communityEvents")) || [];
+        events.push(eventData);
+        localStorage.setItem("communityEvents", JSON.stringify(events));
+
+        alert("Event Scheduled Successfully!");
+        this.reset();
+    });
+
+    // Display Suggested Events for Admin Approval
+    function loadSuggestedEvents() {
+        let suggestions = JSON.parse(localStorage.getItem("eventSuggestions")) || [];
+        const list = document.getElementById("suggestedEventsList");
+        list.innerHTML = "";
+
+        if (suggestions.length === 0) {
+            list.innerHTML = "<p>No suggested events.</p>";
+        } else {
+            suggestions.forEach((event, index) => {
+                let li = document.createElement("li");
+                li.innerHTML = `<strong>${event.name}</strong> - ${event.location} (${event.date} at ${event.time}) 
+                <button onclick="approveEvent(${index})">Approve</button>`;
+                list.appendChild(li);
+            });
         }
-    </script>
+    }
+
+    function approveEvent(index) {
+        let suggestions = JSON.parse(localStorage.getItem("eventSuggestions")) || [];
+        let events = JSON.parse(localStorage.getItem("communityEvents")) || [];
+        
+        events.push(suggestions[index]); // Move event to approved list
+        localStorage.setItem("communityEvents", JSON.stringify(events));
+        
+        suggestions.splice(index, 1); // Remove from suggestions
+        localStorage.setItem("eventSuggestions", JSON.stringify(suggestions));
+
+        loadSuggestedEvents();
+        alert("Event Approved and Added!");
+    }
+
+    loadCleanups();
+    loadSuggestedEvents();
+</script>
 
 </body>
 </html>
