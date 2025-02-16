@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Community Events</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<header>
+    <h1>Community Events</h1>
+</header>
+
+<section class="events-section">
+    <h2>Upcoming Events</h2>
+    <ul id="eventList"></ul>
+    <p id="noEvents" style="display: none;">No upcoming events.</p>
+</section>
+
+<section class="suggest-event">
+    <h2>Suggest a Community Event</h2>
+    <form id="suggestionForm">
+        <label for="suggestion">Your Suggestion:</label>
+        <input type="text" id="suggestion" required>
+        <button type="submit">Send Suggestion</button>
+    </form>
+</section>
+
+<script>
+    function loadEvents() {
+        let events = JSON.parse(localStorage.getItem("events")) || [];
+        let eventList = document.getElementById("eventList");
+        let noEventsMessage = document.getElementById("noEvents");
+
+        if (events.length === 0) {
+            noEventsMessage.style.display = "block";
+            eventList.innerHTML = "";
+        } else {
+            noEventsMessage.style.display = "none";
+            eventList.innerHTML = "";
+            
+            events.forEach((event, index) => {
+                let li = document.createElement("li");
+                li.innerHTML = `<strong>Location:</strong> ${event.location} <br> 
+                                <strong>Time:</strong> ${event.time} <br>
+                                <label for="eventCode${index}">Enter Event Code:</label>
+                                <input type="text" id="eventCode${index}">
+                                <button onclick="joinEvent(${index})">Sign Up</button>`;
+                eventList.appendChild(li);
+            });
+        }
+    }
+
+    function joinEvent(index) {
+        let events = JSON.parse(localStorage.getItem("events")) || [];
+        let enteredCode = document.getElementById(eventCode${index}).value;
+        
+        if (enteredCode === events[index].code) {
+            alert("You have successfully signed up for the event!");
+        } else {
+            alert("Incorrect event code. Please enter the correct code given at the event.");
+        }
+    }
+
+    document.getElementById("suggestionForm").addEventListener("submit", function(event) {
+        event.preventDefault();
+        
+        let suggestion = document.getElementById("suggestion").value;
+        let suggestions = JSON.parse(localStorage.getItem("eventSuggestions")) || [];
+        suggestions.push(suggestion);
+        localStorage.setItem("eventSuggestions", JSON.stringify(suggestions));
+
+        alert("Your suggestion has been sent to the admin!");
+        document.getElementById("suggestionForm").reset();
+    });
+
+    loadEvents();
+</script>
+
+</body>
+</html>
