@@ -16,6 +16,42 @@
     <a href="profile.html" class="nav-item">👤 Profile</a>
 </nav>
 
+    <h2>Upcoming Community Events</h2>
+<ul id="eventsList"></ul>
+
+<script>
+    // Fetch and display events from localStorage
+    window.onload = function() {
+        const events = JSON.parse(localStorage.getItem("events")) || [];
+
+        const eventsList = document.getElementById("eventsList");
+
+        // Clear the list before populating
+        eventsList.innerHTML = "";
+
+        if (events.length > 0) {
+            events.forEach(event => {
+                const li = document.createElement("li");
+                li.innerHTML = `
+                    <strong>${event.title}</strong><br>
+                    Location: ${event.location}<br>
+                    Start Time: ${event.startTime}<br>
+                    End Time: ${event.endTime}<br>
+                    <button onclick="signUp('${event.title}')">Sign Up</button>
+                `;
+                eventsList.appendChild(li);
+            });
+        } else {
+            eventsList.innerHTML = "No upcoming events. You can suggest one!";
+        }
+    };
+
+    // Handle event sign up (you can implement this to capture sign-ups)
+    function signUp(eventTitle) {
+        alert(You signed up for: ${eventTitle});
+    }
+</script>
+
     <a href="index.html" class="back-button">← Back to Home</a>
     
 <header>
