@@ -27,11 +27,9 @@
         <p>Help clean up your community, earn rewards, and make a positive impact!</p>
         <a href="signup.html" class="btn">Get Started</a>
         window.onload = function() {
-    // Check if the user data is in localStorage (meaning they're signed up)
     const username = localStorage.getItem("username");
     const email = localStorage.getItem("email");
 
-    // If user data exists, hide the "Get Started" link
     if (username && email) {
         const getStartedLink = document.querySelector("a[href='signup.html']");
         if (getStartedLink) {
